@@ -24,7 +24,7 @@ def load_time_data(folder, src_name, time_config):
 def time_series_processing(data, mode, setting):
     if mode == "one-day":
         n_sample = data.shape[0]
-        seq_len = setting["seq_len"]
+        seq_len = setting["seq-len"]
         x = [data[i : i+seq_len] for i in range(0, n_sample - seq_len)]
         y = [data[i] for i in range(seq_len, n_sample)]
         return {
@@ -48,7 +48,7 @@ def time_series_processing(data, mode, setting):
         
     if mode == "future-day":     
         n_sample = data.shape[0]
-        seq_len = setting["seq_len"]
+        seq_len = setting["seq-len"]
         future = setting["future"]
         x = [data[i : i+seq_len] for i in range(0, n_sample - seq_len)]
         # next day correspond with future = 1
@@ -62,7 +62,7 @@ def time_series_processing(data, mode, setting):
         }    
 
 
-def preprocessing(data, name, test_ratio, mode, setting):
+def preprocessing(data, name, mode, setting, test=None):
     train = time_series_processing(data=data, mode=mode, setting=setting)
     # Scale data
     x_scaler = MinMaxScaler()
@@ -71,13 +71,28 @@ def preprocessing(data, name, test_ratio, mode, setting):
     y_scaler.fit(train["Y"])
     train["X"] = x_scaler.transform(train["X"])
     train["Y"] = y_scaler.transform(train["Y"])
-    # test["X"] = x_scaler.transform(test["X"])
-    # test["Y"] = y_scaler.transform(test["Y"])
-
-    return {
+    if test is None :
+        return {
         "name": name,
-        "train": train,
-        # "test": test,
+        "data": train,
         "x_scaler": x_scaler,
         "y_scaler": y_scaler
-    }
+        }
+        
+    else :
+        test = time_series_processing(data=test, mode=mode, setting=setting)
+        test["X"] = x_scaler.transform(test["X"])
+        test["Y"] = y_scaler.transform(test["Y"])
+        return {
+        "name": name,
+        "data": train,
+        "x_scaler": x_scaler,
+        "y_scaler": y_scaler
+        }, {
+        "name": name,
+        "data": test,
+        "x_scaler": x_scaler,
+        "y_scaler": y_scaler }
+        
+
+    
