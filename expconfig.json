@@ -1,0 +1,14 @@
+{
+    "train-start": "2016-12-31 23:59:59",
+    "train-finish": "2021-01-01 00:00:00",
+    "test-start": "2020-12-31 23:59:59",
+    "test-finish": "2021-07-01 00:00:00",
+    "train": ["ACB", "BID", "HDB", "MBB", "STB", "VCB", "VPB"],
+    "test": ["GVR", "POW", "TCB", "TPB", "VHM"],
+    "train-folder": "./Data/stock_data/data_for_teacher",
+    "test-folder": "./Data/stock_data/data_for_student",
+    "batch-size": "64",
+    "mode": "future-day",
+    "seq-len": 22,
+    "future": 5
+}
